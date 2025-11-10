@@ -1,59 +1,55 @@
 import "../App.css";
 import React, { useEffect, useState } from "react";
 import MeetupList from "../components/meetups/MeetupList";
+import { FIREBASE_ENDPOINTS } from "../config/firebase";
 
 export default function AllMeetups() {
   const [loading, setLoading] = useState(true);
   const [loadedMeetups, setLoadedMeetups] = useState([]);
-
-  // useEffect(() => {
-  //   setLoading(true);
-  //   fetch(
-  //     "https://react-meetups-71be7-default-rtdb.firebaseio.com/meetups.json"
-  //   )
-  //     .then((res) => {
-  //       return res.json();
-  //     })
-  //     .then((data) => {
-  //       const meetups = [];
-  //       for (const key in data) {
-  //         const meetup = {
-  //           id: key,
-  //           ...data[key],
-  //         };
-  //         meetups.push(meetup);
-  //       }
-
-  //       setLoading(false);
-  //       setLoadedMeetups(meetups);
-  //     });
-  // }, []);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchMeetups = async () => {
       setLoading(true);
+      setError(null);
 
       try {
-        const response = await fetch(
-          "https://react-meetups-71be7-default-rtdb.firebaseio.com/meetups.json"
-        );
+        const response = await fetch(FIREBASE_ENDPOINTS.meetups);
+
+        if (!response.ok) {
+          throw new Error("Failed to load meetups.");
+        }
+
         const data = await response.json();
+
+        if (!data) {
+          setLoadedMeetups([]);
+          return;
+        }
 
         const meetups = Object.keys(data).map((key) => ({
           id: key,
           ...data[key],
         }));
 
-        setLoading(false);
         setLoadedMeetups(meetups);
       } catch (error) {
-        // Handle error
+        setError(error.message || "Something went wrong, please try again.");
+      } finally {
         setLoading(false);
       }
     };
 
     fetchMeetups();
   }, []);
+
+  if (error) {
+    return (
+      <section>
+        <p>{error}</p>
+      </section>
+    );
+  }
 
   if (loading) {
     return (
@@ -65,7 +61,7 @@ export default function AllMeetups() {
         >
           <svg
             aria-hidden="true"
-            class="inline w-10 h-10 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-gray-300"
+            className="inline w-10 h-10 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600 dark:fill-gray-300"
             viewBox="0 0 100 101"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"

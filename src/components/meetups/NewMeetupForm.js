@@ -6,14 +6,14 @@ export default function NewMeetupForm(props) {
   const titleInputRef = useRef();
   const imageInputRef = useRef();
   const addressInputRef = useRef();
-  const descriptionIputRef = useRef();
+  const descriptionInputRef = useRef();
 
   function submitHandler(e) {
     e.preventDefault();
     const enteredTitle = titleInputRef.current.value;
     const enteredImage = imageInputRef.current.value;
     const enteredAddress = addressInputRef.current.value;
-    const enteredDescription = descriptionIputRef.current.value;
+    const enteredDescription = descriptionInputRef.current.value;
 
     const meetupData = {
       title: enteredTitle,
@@ -44,11 +44,13 @@ export default function NewMeetupForm(props) {
             required
             id="description"
             rows="5"
-            ref={descriptionIputRef}
+            ref={descriptionInputRef}
           />
         </div>
         <div className={classes.actions}>
-          <button>Add Meetup</button>
+          <button type="submit" disabled={props.isSubmitting}>
+            {props.isSubmitting ? "Adding..." : "Add Meetup"}
+          </button>
         </div>
       </form>
     </Card>
