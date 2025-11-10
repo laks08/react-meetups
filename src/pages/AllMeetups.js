@@ -7,9 +7,11 @@ import React, {
   useState,
 } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import MeetupList from "../components/meetups/MeetupList";
 import FavoriteContext from "../store/FavoritesContext";
 import { FIREBASE_ENDPOINTS } from "../config/firebase";
+import ConfirmDialog from "../components/ui/ConfirmDialog";
 
 export default function AllMeetups() {
   const favoriteContext = useContext(FavoriteContext);
@@ -19,7 +21,7 @@ export default function AllMeetups() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [deletingId, setDeletingId] = useState(null);
-  const [mutationMessage, setMutationMessage] = useState(null);
+  const [confirmState, setConfirmState] = useState({ open: false, meetupId: null });
   const [pinnedMeetupIds, setPinnedMeetupIds] = useState(() => {
     if (typeof window === "undefined") {
       return [];
@@ -115,17 +117,13 @@ export default function AllMeetups() {
     navigate(`/meetups/${meetupId}/edit`);
   }
 
-  async function handleDeleteMeetup(meetupId) {
-    const confirmed = window.confirm(
-      "Delete this meetup permanently? This cannot be undone."
-    );
+  function handleDeleteMeetup(meetupId) {
+    setConfirmState({ open: true, meetupId });
+  }
 
-    if (!confirmed) {
-      return;
-    }
-
+  async function proceedDelete(meetupId) {
+    setConfirmState({ open: false, meetupId: null });
     setDeletingId(meetupId);
-    setMutationMessage(null);
 
     try {
       const response = await fetch(FIREBASE_ENDPOINTS.meetupById(meetupId), {
@@ -141,15 +139,9 @@ export default function AllMeetups() {
       );
       setPinnedMeetupIds((prev) => prev.filter((id) => id !== meetupId));
       favoriteContext.removeFavorite(meetupId);
-      setMutationMessage({
-        type: "success",
-        text: "Meetup deleted successfully.",
-      });
+      toast.success("Meetup deleted");
     } catch (err) {
-      setMutationMessage({
-        type: "error",
-        text: err.message || "Unable to delete meetup.",
-      });
+      toast.error(err.message || "Unable to delete meetup");
     } finally {
       setDeletingId(null);
     }
@@ -260,18 +252,6 @@ export default function AllMeetups() {
     <section className="space-y-12">
       {heroSection}
 
-      {mutationMessage && (
-        <div
-          className={`rounded-3xl border px-6 py-4 text-sm font-medium ${
-            mutationMessage.type === "success"
-              ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-900/30 dark:text-emerald-200"
-              : "border-red-200 bg-red-50 text-red-700 dark:border-red-900 dark:bg-red-900/30 dark:text-red-200"
-          }`}
-        >
-          {mutationMessage.text}
-        </div>
-      )}
-
       {pinnedMeetups.length > 0 && (
         <MeetupList
           meetups={pinnedMeetups}
@@ -296,6 +276,16 @@ export default function AllMeetups() {
         onDelete={handleDeleteMeetup}
         deletingId={deletingId}
         emptyMessage="No meetups match your filters."
+      />
+
+      <ConfirmDialog
+        open={confirmState.open}
+        title="Delete meetup"
+        description="This meetup will be permanently removed."
+        confirmLabel="Delete"
+        onCancel={() => setConfirmState({ open: false, meetupId: null })}
+        onConfirm={() => confirmState.meetupId && proceedDelete(confirmState.meetupId)}
+        loading={Boolean(deletingId)}
       />
     </section>
   );

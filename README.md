@@ -9,7 +9,7 @@ A modern, theme-aware meetup board built with React 18, React Router 6, Tailwind
 - **Dark mode toggle** powered by a custom theme context (remembers your preference in `localStorage`).
 - **Pin & favorite system** so you can highlight must-see meetups while keeping a personal favorites board.
 - **Full CRUD**: create, edit, and delete meetups. Edits reuse the same form with prefilled data, and deletes instantly remove pins/favorites.
-- **Responsive cards** with management actions (pin, favorite, edit, delete) and stateful button feedback.
+- **Responsive cards** with management actions (pin, favorite, edit, delete) backed by toast confirmations.
 - **Tailwind-only styling** for fast iteration and consistent design tokens.
 
 ## 🛠️ Tech Stack
@@ -27,7 +27,7 @@ npm install
 ```
 
 ### Environment Variables
-Create a `.env` file in the project root (or update the existing one) with your Firebase credentials:
+Copy `.env.example` to `.env` in the project root and fill in your Firebase credentials:
 
 ```bash
 REACT_APP_FIREBASE_API_KEY=...

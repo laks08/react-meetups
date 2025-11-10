@@ -1,8 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import NewMeetupForm from "../components/meetups/NewMeetupForm";
 import { FIREBASE_ENDPOINTS } from "../config/firebase";
 import FavoriteContext from "../store/FavoritesContext";
+import ConfirmDialog from "../components/ui/ConfirmDialog";
 
 export default function EditMeetup() {
   const { meetupId } = useParams();
@@ -12,6 +14,7 @@ export default function EditMeetup() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -69,23 +72,22 @@ export default function EditMeetup() {
         throw new Error("Failed to update meetup.");
       }
 
+      toast.success("Meetup updated");
       navigate("/");
     } catch (err) {
       setError(err.message || "Unable to save changes right now.");
+      toast.error(err.message || "Unable to save changes");
     } finally {
       setSubmitting(false);
     }
   }
 
   async function deleteMeetupHandler() {
-    const confirmed = window.confirm(
-      "Delete this meetup permanently? This cannot be undone."
-    );
+    setConfirmOpen(true);
+  }
 
-    if (!confirmed) {
-      return;
-    }
-
+  async function confirmDelete() {
+    setConfirmOpen(false);
     setSubmitting(true);
     setError(null);
 
@@ -99,9 +101,12 @@ export default function EditMeetup() {
       }
 
       favoriteContext.removeFavorite(meetupId);
+      toast.success("Meetup deleted");
       navigate("/");
     } catch (err) {
-      setError(err.message || "Unable to delete meetup right now.");
+      const message = err.message || "Unable to delete meetup right now.";
+      setError(message);
+      toast.error(message);
     } finally {
       setSubmitting(false);
     }
@@ -144,6 +149,16 @@ export default function EditMeetup() {
           onDelete={deleteMeetupHandler}
         />
       ) : null}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete meetup"
+        description="This meetup will be removed permanently."
+        confirmLabel="Delete"
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={confirmDelete}
+        loading={submitting}
+      />
     </section>
   );
 }
