@@ -23,6 +23,8 @@ export const database = getDatabase(app);
 // For backward compatibility with existing code using REST API
 export const FIREBASE_ENDPOINTS = {
   meetups: `${process.env.REACT_APP_FIREBASE_DATABASE_URL}/meetups.json`,
+  meetupById: (id) =>
+    `${process.env.REACT_APP_FIREBASE_DATABASE_URL}/meetups/${id}.json`,
 };
 
 export default app;
