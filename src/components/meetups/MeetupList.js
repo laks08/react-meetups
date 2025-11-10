@@ -37,7 +37,7 @@ export default function MeetupList({
           {emptyMessage}
         </div>
       ) : (
-        <ul className="grid gap-8 sm:grid-cols-2">
+        <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {meetups.map((meetup) => (
             <MeetupItem
               key={meetup.id}

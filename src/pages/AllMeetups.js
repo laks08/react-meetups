@@ -156,14 +156,14 @@ export default function AllMeetups() {
   }
 
   const heroSection = (
-    <section className="relative mb-12 overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-8 text-white shadow-2xl shadow-slate-900/40 sm:p-12">
+    <section className="relative mb-12 overflow-hidden rounded-[32px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 text-white shadow-2xl shadow-slate-900/40 sm:p-10 lg:p-12">
       <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand-500/30 blur-3xl"></div>
-      <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center">
-        <div className="flex-1 space-y-4">
+      <div className="relative flex flex-col gap-8 lg:grid lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:items-center">
+        <div className="space-y-4">
           <p className="text-xs font-semibold uppercase tracking-[0.5em] text-white/70">
             Curated for builders
           </p>
-          <h1 className="text-4xl font-semibold leading-tight sm:text-5xl">
+          <h1 className="text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
             Discover meetups, save your favorites, and pin what matters.
           </h1>
           <p className="text-base text-white/70">
@@ -173,7 +173,7 @@ export default function AllMeetups() {
         </div>
         <Link
           to="/new-meetup"
-          className="inline-flex items-center justify-center rounded-3xl bg-white px-8 py-4 text-lg font-semibold text-slate-900 transition hover:-translate-y-1 hover:bg-slate-100"
+          className="inline-flex items-center justify-center rounded-3xl bg-white px-8 py-4 text-lg font-semibold text-slate-900 transition hover:-translate-y-1 hover:bg-slate-100 lg:justify-self-end"
         >
           ✨ Create a meetup
         </Link>
@@ -191,8 +191,8 @@ export default function AllMeetups() {
           </div>
         ))}
       </div>
-      <div className="relative mt-8 flex flex-col gap-4 lg:flex-row">
-        <div className="flex flex-1 items-center gap-3 rounded-3xl bg-white/10 px-5 py-4 text-base">
+      <div className="relative mt-6 flex flex-col gap-4 lg:flex-row lg:items-center">
+        <div className="flex flex-1 items-center gap-3 rounded-3xl bg-white/10 px-5 py-3 text-base">
           <span className="text-white/70">🔍</span>
           <input
             type="search"
@@ -211,7 +211,7 @@ export default function AllMeetups() {
             </button>
           )}
         </div>
-        <div className="flex items-center gap-3 text-sm">
+        <div className="flex items-center gap-3 text-sm lg:justify-end">
           <span className="rounded-full bg-white/10 px-4 py-2 text-white/70">
             {filteredMeetups.length} results
           </span>

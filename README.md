@@ -1,70 +1,81 @@
-# Getting Started with Create React App
+# Modern Meetups
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, theme-aware meetup board built with React 18, React Router 6, Tailwind CSS, and Firebase Realtime Database. Create, edit, pin, favorite, and delete events through a polished UI that works in both light and dark mode.
 
-## Available Scripts
+![Hero dashboard](public/screenshots/heropage.png)
 
-In the project directory, you can run:
+## ✨ Features
+- **Hero discovery dashboard** with live stats, search, and quick access to creating new meetups.
+- **Dark mode toggle** powered by a custom theme context (remembers your preference in `localStorage`).
+- **Pin & favorite system** so you can highlight must-see meetups while keeping a personal favorites board.
+- **Full CRUD**: create, edit, and delete meetups. Edits reuse the same form with prefilled data, and deletes instantly remove pins/favorites.
+- **Responsive cards** with management actions (pin, favorite, edit, delete) and stateful button feedback.
+- **Tailwind-only styling** for fast iteration and consistent design tokens.
 
-### `npm start`
+## 🛠️ Tech Stack
+- React 18 (Create React App)
+- React Router DOM 6
+- Tailwind CSS 3 (JIT, dark-mode class strategy)
+- Context API for Favorites & Theme state
+- Firebase Realtime Database (REST + SDK bootstrap)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🚀 Getting Started
+```bash
+git clone <repo>
+cd react-meetups
+npm install
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Environment Variables
+Create a `.env` file in the project root (or update the existing one) with your Firebase credentials:
 
-### `npm test`
+```bash
+REACT_APP_FIREBASE_API_KEY=...
+REACT_APP_FIREBASE_AUTH_DOMAIN=...
+REACT_APP_FIREBASE_DATABASE_URL=https://<PROJECT>.firebaseio.com
+REACT_APP_FIREBASE_PROJECT_ID=...
+REACT_APP_FIREBASE_STORAGE_BUCKET=...
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=...
+REACT_APP_FIREBASE_APP_ID=...
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+> Need help gathering these? See `FIREBASE_SETUP.md` for step-by-step screenshots plus export/import tips (you can seed the DB with `react-meetups-71be7-default-rtdb-meetups-export.json` via Firebase’s import dialog).
 
-### `npm run build`
+### Local Development
+- `npm start` – CRA dev server on `http://localhost:3000`.
+- `npm test` – Jest watcher (useful for component/unit tests).
+- `npm run build` – Production bundle (used to verify regressions after changes).
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🌐 Firebase Integration
+- All meetups are stored under the `/meetups` collection in Realtime Database.
+- REST helpers (`src/config/firebase.js`) expose:
+  - `FIREBASE_ENDPOINTS.meetups` – collection CRUD (`GET`/`POST`).
+  - `FIREBASE_ENDPOINTS.meetupById(id)` – single document operations (`PATCH`/`DELETE`).
+- The UI assumes public read/write during development. Before shipping, update your RTDB rules or add auth + tokens.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🧭 App Tour
+- **All Meetups (`/`)**: hero, stats, search, pinned spotlight, and the full feed. Pinned IDs persist in `localStorage`.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  ![All meetups grid + stats](public/screenshots/addmeetups.png)
 
-### `npm run eject`
+- **Favorites (`/favorites`)**: recap of items saved through the favorite button (backed by `FavoritesContext`).
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+  ![Favorites page](public/screenshots/favoritespage.png)
+- **New Meetup (`/new-meetup`)**: marketing-style hero plus an enhanced form with helper text, async submit state, and validation.
+- **Edit Meetup (`/meetups/:id/edit`)**: loads the target meetup, lets you update in place, or delete entirely.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🧩 Architecture Notes
+- Tailwind config (`tailwind.config.js`) defines the brand palette and enables `darkMode: "class"`.
+- `ThemeContext` decorates the root (`src/index.js`) so every component sees the current theme.
+- Card/grid components no longer rely on CSS modules; they’re all Tailwind classes for consistency.
+- Pinned meetups and mutation banners live in `src/pages/AllMeetups.js`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## ⚠️ Known Warnings
+- CRA surfaces a warning about `@babel/plugin-proposal-private-property-in-object`. Add it to `devDependencies` if the message bothers you.
+- `caniuse-lite` freshness: run `npx update-browserslist-db@latest` occasionally.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 📦 Deployment
+After `npm run build`, deploy the `build/` folder to any static host (Firebase Hosting, Netlify, Vercel, etc.). If you alter the hosting path, set `homepage` in `package.json`.
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+Questions or ideas for the next iteration (auth, RSVPs, comments)? Open an issue or start a branch! 🎉
